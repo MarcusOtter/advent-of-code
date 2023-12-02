@@ -12,7 +12,7 @@ public class Program
 		var sessionToken = GetSessionToken();
 		var inputFetcher = new PuzzleInputFetcher(sessionToken);
 		var input = await inputFetcher.FetchPuzzleInputAsync(date);
-		
+
 		// TODO: Get dynamically like last year :)
 		var solver = new PuzzleSolver01();
 		var firstStar = solver.SolveFirstStar(input);
