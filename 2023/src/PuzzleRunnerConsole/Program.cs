@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using PuzzleSolvers;
-using PuzzleSolvers.Day01;
+using PuzzleSolvers.Day02;
 
 namespace PuzzleRunnerConsole;
 
@@ -8,13 +8,30 @@ public class Program
 {
 	public static async Task Main()
 	{
-		var date = DateTime.Now;
+		var date = new DateTime(2023, 12, 02);
 		var sessionToken = GetSessionToken();
 		var inputFetcher = new PuzzleInputFetcher(sessionToken);
 		var input = await inputFetcher.FetchPuzzleInputAsync(date);
 
+
+		var demoInput = new PuzzleInput(
+			"""
+			467..114..
+			...*......
+			..35..633.
+			......#...
+			617*......
+			.....+.58.
+			..592.....
+			......755.
+			...$.*....
+			.664.598..         
+			""");
+
+		var grid = demoInput.Grid;
+
 		// TODO: Get dynamically like last year :)
-		var solver = new PuzzleSolver01();
+		var solver = new PuzzleSolver02();
 		var firstStar = solver.SolveFirstStar(input);
 		Console.WriteLine(firstStar);
 
