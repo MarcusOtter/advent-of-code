@@ -4,59 +4,48 @@ namespace PuzzleSolvers.Day03;
 
 public partial class PuzzleSolver03
 {
-	private static readonly char[] SpecialCharacters = { '=', '*', '+', '/', '&', '#', '-', '%', '$', '@' };
+	private const string SpecialCharacters = "=*+/&#-%$@";
 	
 	public string SolveFirstStar(PuzzleInput input)
 	{
-		var grid = input.Grid;
+		var grid = input.GridRaw;
+		var gridWidth = grid[0].Length;
+		var numberMatches = NumberRegex().EnumerateMatches(input.Raw);
 		var sum = 0;
-		
-		for (var rowIndex = 0; rowIndex < grid.Length; rowIndex++)
+
+		foreach (var match in numberMatches)
 		{
-			var lineAsString = new string(grid[rowIndex]);
-			var numberMatches = NumberRegex().Matches(lineAsString);
-
-			foreach (var match in numberMatches)
+			var isAdjacentToSymbol = false;
+			var flattenedIndexStart = match.Index;
+			var flattenedIndexEnd = match.Index + match.Length;
+			var value = input.Raw[flattenedIndexStart..flattenedIndexEnd];
+			var rowIndex = flattenedIndexStart / gridWidth;
+			var columnIndexStart = flattenedIndexStart % gridWidth;
+			var columnIndexEnd = flattenedIndexEnd % gridWidth;
+			
+			for (var columnIndex = columnIndexStart; columnIndex < columnIndexEnd; columnIndex++)
 			{
-				var adjacentToSymbol = false;
-				var fullNumber = match.ToString();
-				if (string.IsNullOrWhiteSpace(fullNumber)) continue;
-				
-				var startIndices = lineAsString.AllIndicesOf(fullNumber);
-				foreach (var startIndex in startIndices)
-				{
-					for (var columnIndex = startIndex; columnIndex < startIndex + fullNumber.Length; columnIndex++)
-					{
-						var canGoUp = rowIndex != 0;
-						var canGoDown = rowIndex != grid.Length - 1 && grid[rowIndex + 1].Length > 0;
-						var canGoLeft = columnIndex != 0;
-						var canGoRight = columnIndex != lineAsString.Length - 1;
+				var canGoUp = rowIndex > 0;
+				var canGoDown = rowIndex < grid.Length - 1 && grid[rowIndex + 1].Length > 0;
+				var canGoLeft = columnIndex > 0;
+				var canGoRight = columnIndex < gridWidth - 1;
 
-						try
-						{
-							if (canGoUp && canGoLeft &&  SpecialCharacters.Contains(grid[rowIndex - 1][columnIndex - 1])) adjacentToSymbol = true;
-							if (canGoUp &&               SpecialCharacters.Contains(grid[rowIndex - 1][columnIndex + 0])) adjacentToSymbol = true;
-							if (canGoUp && canGoRight && SpecialCharacters.Contains(grid[rowIndex - 1][columnIndex + 1])) adjacentToSymbol = true;
+				if (canGoUp && canGoLeft &&  SpecialCharacters.Contains(grid[rowIndex - 1][columnIndex - 1])) isAdjacentToSymbol = true;
+				if (canGoUp &&               SpecialCharacters.Contains(grid[rowIndex - 1][columnIndex + 0])) isAdjacentToSymbol = true;
+				if (canGoUp && canGoRight && SpecialCharacters.Contains(grid[rowIndex - 1][columnIndex + 1])) isAdjacentToSymbol = true;
 						
-							if (canGoLeft &&  SpecialCharacters.Contains(grid[rowIndex + 0][columnIndex - 1])) adjacentToSymbol = true;
-							if (canGoRight && SpecialCharacters.Contains(grid[rowIndex + 0][columnIndex + 1])) adjacentToSymbol = true;
+				if (canGoLeft &&  SpecialCharacters.Contains(grid[rowIndex + 0][columnIndex - 1])) isAdjacentToSymbol = true;
+				if (canGoRight && SpecialCharacters.Contains(grid[rowIndex + 0][columnIndex + 1])) isAdjacentToSymbol = true;
 						
-							if (canGoDown && canGoLeft &&  SpecialCharacters.Contains(grid[rowIndex + 1][columnIndex - 1])) adjacentToSymbol = true;
-							if (canGoDown &&               SpecialCharacters.Contains(grid[rowIndex + 1][columnIndex + 0])) adjacentToSymbol = true;
-							if (canGoDown && canGoRight && SpecialCharacters.Contains(grid[rowIndex + 1][columnIndex + 1])) adjacentToSymbol = true;
-						}
-						catch (Exception e)
-						{
-							Console.WriteLine(e);
-							throw;
-						}
-					}
-				} 
+				if (canGoDown && canGoLeft &&  SpecialCharacters.Contains(grid[rowIndex + 1][columnIndex - 1])) isAdjacentToSymbol = true;
+				if (canGoDown &&               SpecialCharacters.Contains(grid[rowIndex + 1][columnIndex + 0])) isAdjacentToSymbol = true;
+				if (canGoDown && canGoRight && SpecialCharacters.Contains(grid[rowIndex + 1][columnIndex + 1])) isAdjacentToSymbol = true;
 				
-				if (adjacentToSymbol)
-				{
-					sum += int.Parse(fullNumber);
-				}
+			}
+			
+			if (isAdjacentToSymbol)
+			{
+				sum += int.Parse(value);
 			}
 		}
 		
