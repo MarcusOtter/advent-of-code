@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using PuzzleSolvers;
-using PuzzleSolvers.Day02;
 using PuzzleSolvers.Day03;
 
 namespace PuzzleRunnerConsole;
@@ -26,7 +25,7 @@ public class Program
 			..592.....
 			......755.
 			...$.*....
-			.664.598..         
+			.664.598..        
 			""");
 		
 		// TODO: Get dynamically like last year :)
@@ -34,8 +33,8 @@ public class Program
 		var firstStar = solver.SolveFirstStar(input);
 		Console.WriteLine(firstStar);
 
-		// var secondStar = solver.SolveSecondStar(input);
-		// Console.WriteLine(secondStar);
+		var secondStar = solver.SolveSecondStar(input);
+		Console.WriteLine(secondStar);
 	}
 
 	private static string GetSessionToken()
